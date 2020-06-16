@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'phonenumber_field',
+    'api',
 ]
 
 MIDDLEWARE = [
