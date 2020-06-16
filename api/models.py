@@ -48,6 +48,10 @@ class State(models.TextChoices):
     LAKSHADWEEP = 'LD', _('Lakshadweep')
     PUDUCHERRY = 'PY', _('Puducherry')
 
+class Language(models.TextChoices):
+    ENGLISH = 'EN', _('English')
+    HINDI = 'HI', _('Hindi')
+
 class RelationshipActivityType(models.TextChoices):
     FOLLOW = 'F', _('Follow')
     UNFOLLOW = 'U', _('Unfollow')
@@ -55,10 +59,16 @@ class RelationshipActivityType(models.TextChoices):
     MUTE = 'M', _('Mute')
     FOLLOW_REQUESTED = 'FR', _('Follow Requested')
 
+class Gender(models.TextChoices):
+    MALE = 'M', _('Male')
+    FEMALE = 'F', _('Female')
+    TRANS = 'T', _('Transgender')
+    SECRET = 'S', _('Prefer not to say')
+
 class User(models.Model):
     userId = models.CharField(primary_key=True, editable=False, max_length=50)
     creationTime = models.DateTimeField(auto_now_add=True)
-    lastModificationTime = models.DateTimeField(auto_now=True)
+    lastModifiedTime = models.DateTimeField(auto_now=True)
     userHandle = models.CharField(max_length=30, unique=True)
     firstName = models.CharField(max_length=100)
     lastName = models.CharField(max_length=100)
@@ -74,6 +84,8 @@ class User(models.Model):
     post_count = models.IntegerField(default=0)
     accountDisabled = models.BooleanField(default=False)
     accountDeleted = models.BooleanField(default=False)
+    gender = models.CharField(max_length=1, choices=Gender.choices)
+
 
 class Relationships(models.Model):
     follower_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -87,12 +99,16 @@ class Post(models.Model):
     likeCount = models.IntegerField(default=0)
     shareCount = models.IntegerField(default=0)
     replyCount = models.IntegerField(default=0)
-    text = models.IntegerField(max_length=5000)
+    text = models.CharField(max_length=5000)
+    language = models.CharField(max_length=5, choices=Language.choices)
     location = PointField()
     locality = models.CharField(max_length=30)
     district = models.CharField(max_length=30)
     state = models.CharField(max_length=2, choices = State.choices)
     deleted = models.BooleanField(default=False)
+    parentPostId = models.ForeignKey('self', on_delete=models.CASCADE)
+    sharePostId = models.ForeignKey('self', on_delete=models.CASCADE)
+    media = models.ManyToManyField(Media)
 
 class LikesActivity(models.Model):
     postId = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -105,3 +121,7 @@ class RelationshipActivity(model.Model):
     userIdTo = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.IntegerField(choices=RelationshipActivityType.choices, max_length=2)
     # TODO(rahul0379): add some more relevant fields here
+
+class Media(models.Model):
+    postId = models.ForeignKey(Post, on_delete=models.CASCADE)
+    image = models.ImageField()
