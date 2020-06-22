@@ -3,8 +3,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class VerificationLevel(models.TextChoices):
     UNVERIFIED = 'U', 'Unverified'
-    VERIFIED = 'V', 'VERIFIED'
-    OFFICIAL = 'O', 'OFFICIAL'
+    VERIFIED = 'V', 'Verified'
+    OFFICIAL = 'O', 'Official'
 
 class Gender(models.TextChoices):
     MALE = 'M', 'Male'
