@@ -7,6 +7,6 @@ tmp/
 *.egg
 build
 htmlcov
-posts/migrations/*
-users/migrations/*
+*/migrations/*
 db.sqlite3
+*/__pycache__/*
