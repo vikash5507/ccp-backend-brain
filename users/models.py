@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
 class VerificationLevel(models.TextChoices):
@@ -19,15 +20,11 @@ class RelationshipActivityType(models.TextChoices):
     MUTE = 'M', 'Mute'
     FOLLOW_REQUESTED = 'FR', 'Follow Requested'
 
-class User(models.Model):
+class UserData(models.Model):
+    user = User()
     userId = models.CharField(primary_key=True, editable=False, max_length=50)
-    creationTime = models.DateTimeField(auto_now_add=True)
-    lastModifiedTime = models.DateTimeField(auto_now=True)
     userHandle = models.CharField(max_length=30, unique=True)
-    firstName = models.CharField(max_length=100)
-    lastName = models.CharField(max_length=100)
     loginId = models.CharField(max_length=30, unique=True)
-    password = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     mobileNumber = PhoneNumberField(blank=True)
     dateOfBirth = models.DateField(null=True)
