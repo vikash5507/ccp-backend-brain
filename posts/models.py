@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.gis.db.models import PointField
 from django.contrib.auth.models import User
 
 class State(models.TextChoices):
@@ -58,6 +59,7 @@ class Post(models.Model):
     replyCount = models.IntegerField(default=0)
     text = models.CharField(max_length=5000)
     language = models.CharField(max_length=5, choices=Language.choices)
+    location = PointField()
     locality = models.CharField(max_length=30)
     district = models.CharField(max_length=30)
     state = models.CharField(max_length=2, choices = State.choices)

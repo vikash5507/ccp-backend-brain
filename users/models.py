@@ -21,7 +21,7 @@ class RelationshipActivityType(models.TextChoices):
     FOLLOW_REQUESTED = 'FR', 'Follow Requested'
 
 class UserData(models.Model):
-    user = User()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     userId = models.CharField(primary_key=True, editable=False, max_length=50)
     userHandle = models.CharField(max_length=30, unique=True)
     loginId = models.CharField(max_length=30, unique=True)
