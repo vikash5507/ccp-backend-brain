@@ -1,29 +1,20 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Setup steps:
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+1. Make sure you have python 3 and pip installed. With pip you can install Django. "pip install Django".
+2. Install dependencies:
+	- pip install django-phonenumber-field
+	- Install dependency for geodjango (platform dependent)
+3. Clone this repository.
+4. In the ccp_backend folder (this is the folder containing manage.py file), open a terminal.
+5. Make migrations and migrate, this will setup the database!
+	- python manage.py makemigrations
+	- python manage.py migrate
+6. Create a superuser. This will grant you access to the admin site.
+	- python manage.py createsuperuser
+	Follow the instructions in the interactive command line.
+7. Run the server.
+	- python manage.py runserver
+	This will print a localhost url where the django server is up and running. go to http://127.0.0.1:8000/admin to access the admin site. Login using the credentials you set in the creating superuser phase.
+	
