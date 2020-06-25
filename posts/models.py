@@ -68,3 +68,11 @@ class LikesActivity(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
     activityTime = models.DateTimeField(auto_now_add=True)
     # TODO(rahul0379): add some more relevant fields here
+
+class PostLocationData(models.Model):
+    postId = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='location')
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    locality = models.CharField(max_length=30)
+    state = models.CharField(max_length=2, choices = State.choices)
+    district = models.CharField(max_length=30)
