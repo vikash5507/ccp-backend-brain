@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.gis.db.models import PointField
 from users.models import User
 
 class State(models.TextChoices):
@@ -59,10 +58,6 @@ class Post(models.Model):
     replyCount = models.IntegerField(default=0)
     text = models.CharField(max_length=5000)
     language = models.CharField(max_length=5, choices=Language.choices)
-    location = PointField()
-    locality = models.CharField(max_length=30)
-    district = models.CharField(max_length=30)
-    state = models.CharField(max_length=2, choices = State.choices)
     deleted = models.BooleanField(default=False)
     parentPostId = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies')
     sharePostId = models.ForeignKey('self', on_delete=models.CASCADE, related_name='shares')
@@ -73,3 +68,11 @@ class LikesActivity(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
     activityTime = models.DateTimeField(auto_now_add=True)
     # TODO(rahul0379): add some more relevant fields here
+
+class PostLocationData(models.Model):
+    postId = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='location')
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    locality = models.CharField(max_length=30)
+    state = models.CharField(max_length=2, choices = State.choices)
+    district = models.CharField(max_length=30)
