@@ -7,10 +7,10 @@ from django.contrib.auth import authenticate
 from users.models import UserData
 
 class AuthService():
-	def signup_user(self, request, context):
-		user = User.objects.create_user(username=request.id, password=request.password)
-		user.first_name = request.firstName
-		user.last_name = request.lastName
+	def signup_user(self, request):
+		user = User.objects.create_user(username=request.POST['id'], password=request.POST['password'])
+		user.first_name = request.POST['firstName']
+		user.last_name = request.POST['lastName']
 		try:
 			user.save()
 		# TODO(Sachin): Better exception handling with approriate particular exceptions
@@ -20,13 +20,9 @@ class AuthService():
 
 		user_data = UserData(user=user)
 		# set other fields
-	    user_data.userHandle = request.handle 
-	    user_data.loginId = request.loginId 
-	    user_data.description = request.description 
-	    user_data.mobileNumber = request.mobileNumber 
-	    user_data.dateOfBirth = request.dateOfBirth 
-	    user_data.verificationLevel = request.verificationLevel
-	    user_data.gender = request.gender 
+	    user_data.userHandle = request.POST['handle'] 
+	    user_data.loginId = request.POST['loginId'] 
+	    user_data.gender = request.POST['gender'] 
 	    try:
 			user_data.save()
 			# return appropriate response
@@ -34,7 +30,11 @@ class AuthService():
 		except Exception, e:
 			# return appropriate response
 
-	def login_user(self, request, context):
+	def update_user_info(self, request):
+		pass
+
+
+	def login_user(self, request):
 		user = authenticate(username=rrequest.username, password=rrequest.password)
 		if user is not None:
 			try:
@@ -48,7 +48,7 @@ class AuthService():
 
 
 	@login_required
-	def logout_user(self, request, context):
+	def logout_user(self, request):
 		try:
 			logout(request)
 		# TODO(Sachin): Better exception handling with approriate particular exceptions
