@@ -7,3 +7,6 @@ tmp/
 *.egg
 build
 htmlcov
+*/migrations/*
+db.sqlite3
+*/__pycache__/*
