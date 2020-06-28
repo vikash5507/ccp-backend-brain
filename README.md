@@ -5,6 +5,8 @@ Setup steps:
 1. Make sure you have python 3 and pip installed. With pip you can install Django. "pip install Django".
 2. Install dependencies:
 	- pip install django-phonenumber-field
+	- pip install phonenumbers
+	- pip install djangorestframework
 	- Install dependency for geodjango (platform dependent)
 3. Clone this repository.
 4. In the ccp_backend folder (this is the folder containing manage.py file), open a terminal.
