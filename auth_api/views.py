@@ -17,7 +17,6 @@ class SignupView(View):
 	def post(self, request):
 		try:
 			user = User.objects.create_user(username=request.GET['username'], password=request.GET['password'])
-			print("user created")
 			user.first_name = request.GET['firstName']
 			user.last_name = request.GET['lastName']
 		except MultiValueDictKeyError:
@@ -63,9 +62,6 @@ class LoginView(View):
 class LogoutView(LoginRequiredMixin, View):
 	def get(self, request):
 		try:
-			print("request.user")
-			print(request.user)
-			print("request.user")
 			logout(request)
 			return HttpResponse("success")
 		# TODO(Sachin): Better exception handling with approriate particular exceptions
