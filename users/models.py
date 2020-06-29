@@ -21,7 +21,7 @@ class RelationshipActivityType(models.TextChoices):
     FOLLOW_REQUESTED = 'FR', 'Follow Requested'
 
 class UserData(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     userHandle = models.CharField(max_length=30, unique=True)
     loginId = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=500, default='')
@@ -34,7 +34,7 @@ class UserData(models.Model):
     post_count = models.IntegerField(default=0)
     accountDisabled = models.BooleanField(default=False)
     accountDeleted = models.BooleanField(default=False)
-    gender = models.CharField(max_length=1, choices=Gender.choices)
+    gender = models.CharField(max_length=1, choices=Gender.choices, default='S')
 
 class RelationshipActivity(models.Model):
     userIdFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')

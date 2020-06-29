@@ -15,21 +15,23 @@ from django.utils.datastructures import MultiValueDictKeyError
 @method_decorator(csrf_exempt, name='dispatch')
 class SignupView(View):
 	def post(self, request):
-		if request.method == 'POST':
-			try:
-				user = User.objects.create_user(username=request.GET['username'], password=request.GET['password'])
-				print("user created")
-				user.first_name = request.GET['firstName']
-				user.last_name = request.GET['lastName']
-			except MultiValueDictKeyError:
-				return HttpResponseBadRequest("Invalid request!")
-			try:
-				user.save()
-				return HttpResponse("Success")
-			# TODO(Sachin): Better exception handling with approriate particular exceptions
-			except Exception as e:
-				# log exception
-				return HttpResponseServerError("User creation Failed!")
+		try:
+			user = User.objects.create_user(username=request.GET['username'], password=request.GET['password'])
+			user.first_name = request.GET['firstName']
+			user.last_name = request.GET['lastName']
+		except MultiValueDictKeyError:
+			return HttpResponseBadRequest("Invalid request!")
+		try:
+			user.save()
+			userdata = UserData(user=user)
+			userdata.userHandle = request.GET['handle']
+			userdata.loginId = request.GET['username']
+			userdata.save()
+			return HttpResponse("Success")
+		# TODO(Sachin): Better exception handling with approriate particular exceptions
+		except Exception as e:
+			# log exception
+			return HttpResponseServerError("User creation Failed!")
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -45,7 +47,7 @@ class LoginView(View):
 		if user is not None:
 			try:
 				login(request, user)
-				return HttpResponse()
+				return HttpResponse("success")
 		    	# return auth success response
 		    # TODO(Sachin): Better exception handling with approriate particular exceptions
 			except Exception as e:
