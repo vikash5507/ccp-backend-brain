@@ -115,3 +115,30 @@ class GetFollowersListView(View):
 			return HttpResponseNotFound("User not found!")
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class GetFollowingListView(View):
+	def get(self, request):
+		if request.user and not request.user.is_anonymous:
+			user = request.user
+		else:
+			try:
+				username = request.GET['username']
+			except MultiValueDictKeyError:
+				return HttpResponseBadRequest("Either user should be logged in or send username!")
+			user = User.objects.get(username=username)
+
+		if user is not None:
+			next_page_start_index = request.GET.get('next_page_start_index', 0)
+			corresponding_relations = RelationshipActivity.objects.filter(userIdFrom=user, action='F')
+			if len(corresponding_relations) <= 50:
+				next_page_start_index = next_page_start_index + len(corresponding_relations)
+			else:
+				next_page_start_index = next_page_start_index + 50
+				corresponding_relations = corresponding_relations[next_page_start_index : next_page_start_index+50]
+
+			followers_list = [relation.userIdTo for relation in corresponding_relations]
+			serialized_response = '{\"following\":' + serialize('json', followers_list, cls=DjangoJSONEncoder) + (',\"next_page_start_index\":%x}' % next_page_start_index)
+			print (serialized_response)
+			return JsonResponse(json.loads(serialized_response), safe=False)
+		else:
+			return HttpResponseNotFound("User not found!")
