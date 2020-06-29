@@ -1,8 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from users.models import UserData
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -46,9 +47,37 @@ class GetProfileDataView(LoginRequiredMixin, View):
 			'followers_count':userdata.followers_count,
 			'following_count':userdata.following_count,
 			'post_count':userdata.post_count,
-			'accountDisabled':userdata.accountDisabled,
-			'accountDeleted':userdata.accountDeleted,
 			'gender':userdata.gender
 		})
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class GetUserDataView(View):
+	def get(self, request):
+		try:
+			username = request.GET['username']
+		except MultiValueDictKeyError:
+			return HttpResponseBadRequest("Send username!")
+		user = User.objects.get(username=username)
+		if user is not None:
+			userdata = UserData.objects.get(user=user)
+
+			if userdata.accountDeleted:
+				return HttpResponseNotFound("User does not exist!")
+			if userdata.accountDisabled:
+				return HttpResponseNotFound("User account disabled!")
+
+			return JsonResponse({
+				'userHandle':userdata.userHandle,
+				'description':userdata.description,
+				'mobileNumber':str(userdata.mobileNumber),
+				'dateOfBirth':userdata.dateOfBirth,
+				'verificationLevel':userdata.verificationLevel,
+				'karma':userdata.karma,
+				'followers_count':userdata.followers_count,
+				'following_count':userdata.following_count,
+				'post_count':userdata.post_count,
+				'gender':userdata.gender
+			})
+		else:
+			return HttpResponseNotFound("User does not exist!")
