@@ -7,6 +7,10 @@ class VerificationLevel(models.TextChoices):
     VERIFIED = 'V', 'Verified'
     OFFICIAL = 'O', 'Official'
 
+class AccountPrivacyType(models.TextChoices):
+    PUBLIC = 'PB', 'Public'
+    PRIVATE = 'PR', 'Private'
+
 class Gender(models.TextChoices):
     MALE = 'M', 'Male'
     FEMALE = 'F', 'Female'
@@ -35,6 +39,7 @@ class UserData(models.Model):
     accountDisabled = models.BooleanField(default=False)
     accountDeleted = models.BooleanField(default=False)
     gender = models.CharField(max_length=1, choices=Gender.choices, default='S')
+    privacy = models.CharField(max_length=2, choices=AccountPrivacyType.choices, default='PB')
 
 class RelationshipActivity(models.Model):
     userIdFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')
