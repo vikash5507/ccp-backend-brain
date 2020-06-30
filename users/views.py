@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.models import UserData, RelationshipActivity, AccountPrivacyType, RelationshipActivityType
+from users.models import UserData
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
