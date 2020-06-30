@@ -19,7 +19,7 @@ class Gender(models.TextChoices):
 
 class RelationshipActivityType(models.TextChoices):
     FOLLOW = 'F', 'Follow'
-    UNFOLLOW = 'U', 'Unfollow'
+    OBSELETE = 'O', 'Obselete'
     BLOCK = 'B', 'Block'
     MUTE = 'M', 'Mute'
     FOLLOW_REQUESTED = 'FR', 'Follow Requested'

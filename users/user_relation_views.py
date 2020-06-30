@@ -17,7 +17,7 @@ class FollowUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send username")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			# If user profile is private, then request a follow, else follow directly
@@ -37,12 +37,12 @@ class UnfollowUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send username")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to, action=RelationshipActivityType.FOLLOW)
 			if relation is not None:
-				relation.action = RelationshipActivityType.UNFOLLOW
+				relation.action = RelationshipActivityType.OBSELETE
 				relation.save()
 			else:
 				return HttpResponseNotFound("Given relation does not exist!")
@@ -57,7 +57,7 @@ class AcceptFollowRequestView(LoginRequiredMixin, View):
 		try:
 			user_from_username = request.GET['user_from_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send username")
 		user_from = User.objects.get(username=user_from_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to, action=RelationshipActivityType.FOLLOW_REQUESTED)
@@ -69,6 +69,28 @@ class AcceptFollowRequestView(LoginRequiredMixin, View):
 		else:
 			return HttpResponseNotFound("User not found!")
 
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CancelFollowRequestView(LoginRequiredMixin, View):
+	def post(self, request):
+		user_from = request.user
+
+		try:
+			user_to_username = request.GET['user_to_username']
+		except MultiValueDictKeyError:
+			return HttpResponseBadRequest("Send usernamee")
+		user_to = User.objects.get(username=user_to_username)
+		if user is not None:
+			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to, action=RelationshipActivityType.FOLLOW_REQUESTED)
+			if relation is not None:
+				relation.action = RelationshipActivityType.OBSELETE
+				relation.save()
+			else:
+				return HttpResponseNotFound("Given relation does not exist!")
+		else:
+			return HttpResponseNotFound("User not found!")
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class BlockUserView(LoginRequiredMixin, View):
 	def post(self, request):
@@ -77,7 +99,7 @@ class BlockUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send usernamee")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to)
@@ -97,13 +119,13 @@ class UnblockUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send usernamee")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to, action=RelationshipActivity.BLOCK)
 			if relation is not None:
 				# kept this as unfollow, this should change to something like OBSELETE which can later be cleaned up from the db via background jobs
-				relation.action = RelationshipActivityType.UNFOLLOW
+				relation.action = RelationshipActivityType.OBSELETE
 			else:
 				return HttpResponseNotFound("No corresponding relation exists!")
 			relation.save()
@@ -118,7 +140,7 @@ class MuteUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send usernamee")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to)
@@ -138,13 +160,13 @@ class UnmuteUserView(LoginRequiredMixin, View):
 		try:
 			user_to_username = request.GET['user_to_username']
 		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Send username of user to be followed")
+			return HttpResponseBadRequest("Send usernamee")
 		user_to = User.objects.get(username=user_to_username)
 		if user is not None:
 			relation = RelationshipActivity.objects.get(userFrom=user_from, userTo=user_to, action=RelationshipActivity.MUTE)
 			if relation is not None:
 				# kept this as unfollow, this should change to something like OBSELETE which can later be cleaned up from the db via background jobs
-				relation.action = RelationshipActivityType.UNFOLLOW
+				relation.action = RelationshipActivityType.OBSELETE
 			else:
 				return HttpResponseNotFound("No corresponding relation exists!")
 			relation.save()

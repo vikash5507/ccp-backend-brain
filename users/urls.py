@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import UpdateUserView, GetProfileDataView, GetUserDataView
-from .user_relation_views import FollowUserView, UnfollowUserView, AcceptFollowRequestView, BlockUserView, MuteUserView, UnblockUserView, UnmuteUserView
+from .user_relation_views import FollowUserView, UnfollowUserView, AcceptFollowRequestView, CancelFollowRequestView, BlockUserView, MuteUserView, UnblockUserView, UnmuteUserView
 
 urlpatterns = [
     path('update/', UpdateUserView.as_view()),
@@ -9,6 +9,7 @@ urlpatterns = [
     path('follow_user/', FollowUserView.as_view()),
     path('unfollow_user/', UnfollowUserView.as_view()),
     path('accept_follow_request/', AcceptFollowRequestView.as_view()),
+    path('cancel_follow_request/', CancelFollowRequestView.as_view()),
     path('block_user/', BlockUserView.as_view()),
     path('unblock_user/', UnblockUserView.as_view()),
     path('mute_user/', MuteUserView.as_view()),
