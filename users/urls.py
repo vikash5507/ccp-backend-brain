@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import UpdateUserView, GetProfileDataView, GetUserDataView, FollowUserView, UnfollowUserView, AcceptFollowRequestView, BlockUserView, MuteUserView, UnblockUserView, UnmuteUserView
+from .views import UpdateUserView, GetProfileDataView, GetUserDataView
+from .user_relation_views import FollowUserView, UnfollowUserView, AcceptFollowRequestView, BlockUserView, MuteUserView, UnblockUserView, UnmuteUserView
 
 urlpatterns = [
     path('update/', UpdateUserView.as_view()),
