@@ -37,7 +37,11 @@ class UserData(models.Model):
     gender = models.CharField(max_length=1, choices=Gender.choices, default='S')
 
 class RelationshipActivity(models.Model):
-    userIdFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')
-    userIdTo = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'incoming_relationships')
+    userFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')
+    userTo = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'incoming_relationships')
     action = models.CharField(choices=RelationshipActivityType.choices, max_length=2)
+    creation_date = models.DateTimeField(auto_now_add=True)
     # TODO(rahul0379): add some more relevant fields here
+
+    class Meta:
+        unique_together = ('userFrom', 'userTo')
