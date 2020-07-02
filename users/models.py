@@ -43,4 +43,4 @@ class RelationshipActivity(models.Model):
     # TODO(rahul0379): add some more relevant fields here
 
     class Meta:
-        unique_together = ('userIdFrom', 'userIdTo')
+        unique_together = ('userFrom', 'userTo')
