@@ -100,19 +100,23 @@ class GetFollowersListView(View):
 
 		if user is not None:
 			next_page_start_index = request.GET.get('next_page_start_index', 0)
-			corresponding_relations = RelationshipActivity.objects.filter(userIdTo=user, action='F')
-			if len(corresponding_relations) <= 50:
-				next_page_start_index = next_page_start_index + len(corresponding_relations)
-			else:
-				next_page_start_index = next_page_start_index + 50
-				corresponding_relations = corresponding_relations[next_page_start_index : next_page_start_index+50]
-
-			followers_list = [relation.userIdFrom for relation in corresponding_relations]
+			next_page_start_index, followers_list = self.get_followers_list(user, next_page_start_index)
 			serialized_response = '{\"followers\":' + serialize('json', followers_list, cls=DjangoJSONEncoder) + (',\"next_page_start_index\":%x}' % next_page_start_index)
-			print (serialized_response)
 			return JsonResponse(json.loads(serialized_response), safe=False)
 		else:
 			return HttpResponseNotFound("User not found!")
+
+	def get_followers_list(self, user, next_page_start_index):
+		corresponding_relations = RelationshipActivity.objects.filter(userTo=user, action='F')
+		if len(corresponding_relations) <= 50:
+			next_page_start_index = next_page_start_index + len(corresponding_relations)
+		else:
+			next_page_start_index = next_page_start_index + 50
+			corresponding_relations = corresponding_relations[next_page_start_index : next_page_start_index+50]
+
+		followers_list = [relation.userFrom for relation in corresponding_relations]
+		return (next_page_start_index, followers_list)
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -129,16 +133,22 @@ class GetFollowingListView(View):
 
 		if user is not None:
 			next_page_start_index = request.GET.get('next_page_start_index', 0)
-			corresponding_relations = RelationshipActivity.objects.filter(userIdFrom=user, action='F')
-			if len(corresponding_relations) <= 50:
-				next_page_start_index = next_page_start_index + len(corresponding_relations)
-			else:
-				next_page_start_index = next_page_start_index + 50
-				corresponding_relations = corresponding_relations[next_page_start_index : next_page_start_index+50]
-
-			followers_list = [relation.userIdTo for relation in corresponding_relations]
-			serialized_response = '{\"following\":' + serialize('json', followers_list, cls=DjangoJSONEncoder) + (',\"next_page_start_index\":%x}' % next_page_start_index)
+			next_page_start_index, following_list = self.get_following_list(user, next_page_start_index)
+			serialized_response = '{\"following\":' + serialize('json', following_list, cls=DjangoJSONEncoder) + (',\"next_page_start_index\":%x}' % next_page_start_index)
 			print (serialized_response)
 			return JsonResponse(json.loads(serialized_response), safe=False)
 		else:
 			return HttpResponseNotFound("User not found!")
+
+	def get_following_list(self, user, next_page_start_index):
+		print(user)
+		corresponding_relations = RelationshipActivity.objects.filter(userFrom=user, action='F')
+		print(corresponding_relations)
+		if len(corresponding_relations) <= 50:
+			next_page_start_index = next_page_start_index + len(corresponding_relations)
+		else:
+			next_page_start_index = next_page_start_index + 50
+			corresponding_relations = corresponding_relations[next_page_start_index : next_page_start_index+50]
+
+		following_list = [relation.userTo for relation in corresponding_relations]
+		return (next_page_start_index, following_list)
