@@ -1,0 +1,308 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ccp",
+		"_postman_id": "e0d87080-0225-1843-e878-400dbd276904",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:8000/register/?id=sachinaggarwal077@gmail.com&password=Sachin_28&firstName=Sachin&lastName=Aggarwal&handle=sachag&loginId=sachag",
+			"request": {
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/register/?id=sachinaggarwal077@gmail.com&password=Sachin_28&firstName=Sachin&lastName=Aggarwal&handle=sachag&loginId=sachag",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "sachinaggarwal077@gmail.com",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "Sachin_28",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "firstName",
+							"value": "Sachin",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "lastName",
+							"value": "Aggarwal",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "handle",
+							"value": "sachag",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "loginId",
+							"value": "sachag",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "gender",
+							"value": "",
+							"equals": false,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "register"
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/register/?username=sachinaggarwal0771111@gmail.com&password=Sachin_28&firstName=Sachin&lastName=Aggarwal&handle=sachag111&loginId=sachag111&gender=M",
+			"request": {
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/register/?username=sachinaggarwal0771111@gmail.com&password=Sachin_28&firstName=Sachin&lastName=Aggarwal&handle=sachag111&loginId=sachag111&gender=M",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "sachinaggarwal0771111@gmail.com",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "Sachin_28",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "firstName",
+							"value": "Sachin",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "lastName",
+							"value": "Aggarwal",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "handle",
+							"value": "sachag111",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "loginId",
+							"value": "sachag111",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "gender",
+							"value": "M",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "Register"
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/login/?username=sachinaggarwal077w111q1@gmail.com&password=Sachin_28",
+			"request": {
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/login/?username=sachinaggarwal077w111q1@gmail.com&password=Sachin_28",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"login",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "sachinaggarwal077w111q1@gmail.com",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "Sachin_28",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "firstName",
+							"value": "Sachin",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Aggarwal",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "handle",
+							"value": "sachag111qw",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "loginId",
+							"value": "sachag1w11qw",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "gender",
+							"value": "M",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "login"
+			},
+			"response": []
+		},
+		{
+			"name": "http://127.0.0.1:8000/auth/logout/",
+			"request": {
+				"url": {
+					"raw": "http://127.0.0.1:8000/auth/logout/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"logout",
+						""
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "sachinaggarwal077w111q1@gmail.com",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "Sachin_28",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "firstName",
+							"value": "Sachin",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Aggarwal",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "handle",
+							"value": "sachag111qw",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "loginId",
+							"value": "sachag1w11qw",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "gender",
+							"value": "M",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "logout"
+			},
+			"response": []
+		}
+	]
+}

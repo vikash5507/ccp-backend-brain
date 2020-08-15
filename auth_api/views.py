@@ -11,25 +11,51 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.utils.datastructures import MultiValueDictKeyError
+import random
+import string
 
 @method_decorator(csrf_exempt, name='dispatch')
 class SignupView(View):
 	def post(self, request):
 		try:
-			user = User.objects.create_user(username=request.GET['username'], password=request.GET['password'])
-			user.first_name = request.GET['firstName']
-			user.last_name = request.GET['lastName']
+			email = request.POST['email']
+			password = request.POST['password']
+			print("checking user present or not")
+			#print(User.objects.filter(username=username).exists())
+			#print(isUserExist(username))
+			if isUserAlreadyExist(email):
+				return HttpResponseBadRequest("User Already Exist", status=409)
+			else:
+				#ToDO making username and email same (we can genrate unique values also)
+				user = User.objects.create_user(username=email, password=password)
+				user.email = email
+				fullname = request.POST['fullname']
+				first_second_name_list = fullname.split(" ")
+				user.first_name = first_second_name_list[0]
+				if len(first_second_name_list) == 1:
+					user.last_name = ''
+				else:
+					user.last_name = ' '.join(first_second_name_list[1:])
 		except MultiValueDictKeyError:
 			return HttpResponseBadRequest("Invalid request!")
 		try:
 			user.save()
-			userdata = UserData(user=user)
-			userdata.userHandle = request.GET['handle']
-			userdata.loginId = request.GET['username']
+			signUpUser = User.objects.get(username=email)
+			userdata = UserData(user=signUpUser)
+			userdata.userHandle = signUpUser.first_name+generate_random_code(4)
+			userdata.loginId = signUpUser.username
+			#ToDo - Update signedMethod - mobile/email
 			userdata.save()
-			return HttpResponse("Success")
+			
+			context = {
+				'uid' : signUpUser.id,
+				'fullname' : ' '.join([signUpUser.first_name, signUpUser.last_name]),
+				'email' : signUpUser.email,
+				'username' : signUpUser.username
+			}
+			return JsonResponse(context, safe=False)
 		# TODO(Sachin): Better exception handling with approriate particular exceptions
-		except Exception as e:
+		except Exception:
 			# log exception
 			return HttpResponseServerError("User creation Failed!")
 
@@ -43,11 +69,29 @@ class UpdateUserView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginView(View):
 	def post(self, request):
-		user = authenticate(username=request.GET['username'], password=request.GET['password'])
+		email = request.POST['email']
+		password = request.POST['password']
+		username = None
+		user = User.objects.filter(email=email).first()
+		if user:
+			username = user.username
+		
+		user = authenticate(username=username, password=password)
+		print(user)
 		if user is not None:
 			try:
-				login(request, user)
-				return HttpResponse("success")
+				if user.is_active:
+					login(request, user)
+					signInUser = User.objects.get(username=username)
+					context = {
+						'uid' : signInUser.id,
+						'fullname' : ' '.join([signInUser.first_name, signInUser.last_name]),
+						'email' : signInUser.email,
+						'username' : signInUser.username
+					}
+					return JsonResponse(context, safe=False)
+				else:
+					return HttpResponseBadRequest("Account is disabled!!", status=409)
 		    	# return auth success response
 		    # TODO(Sachin): Better exception handling with approriate particular exceptions
 			except Exception as e:
@@ -55,7 +99,7 @@ class LoginView(View):
 				return HttpResponseServerError(e)
 		else:
 		    # return auth failed response
-		    return HttpResponseBadRequest("User not found!")
+		    return HttpResponseBadRequest("User not found!!")
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -68,3 +112,46 @@ class LogoutView(LoginRequiredMixin, View):
 		except Exception as e:
 			# return logout failed response and log the error
 			return HttpResponseServerError(e)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class forgotPassword(View):
+	def get(self, request):
+		try:
+			email = request.GET['email']
+			if(isUserAlreadyExist(email)):
+				print("user exist, so generate random password")
+				new_password = generate_random_code(8)
+				user = User.objects.filter(username=email).first()
+				user.set_password(new_password)
+				user.save()
+				return HttpResponse("success")
+			else:
+				print("user doesn't exist, so let user know that")
+				return HttpResponseBadRequest("User not found!")
+			
+		# TODO(Sachin): Better exception handling with approriate particular exceptions
+		except Exception as e:
+			# return logout failed response and log the error
+			return HttpResponseServerError(e)
+
+# @method_decorator(csrf_exempt, name='dispatch')
+# class CheckUserExist(View):
+# 	def get(self, request):
+# 		try:
+# 			email = request.GET['email']
+# 			if(isUserAlreadyExist(email)):
+# 				return HttpResponse("yes")
+# 			else:
+# 				return HttpResponse("no")
+# 		# TODO(Sachin): Better exception handling with approriate particular exceptions
+# 		except Exception as e:
+# 			# return logout failed response and log the error
+# 			return HttpResponseServerError(e)
+
+def isUserAlreadyExist(username):
+	return User.objects.filter(username=username).exists()
+
+def generate_random_code(code_length):
+	code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(code_length))
+	return code
