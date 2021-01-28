@@ -8,10 +8,10 @@ class VerificationLevel(models.TextChoices):
     VERIFIED = 'V', 'Verified'
     OFFICIAL = 'O', 'Official'
 
-class SignedUpMethod(models.TextChoices):
-    MOBILE = 'MB', 'Mobile'
-    EMAIL = 'EM', 'Email'
-    OTHER = 'OT', 'Other way not possible'
+# class SignedUpMethod(models.TextChoices):
+#     MOBILE = 'MB', 'Mobile'
+#     EMAIL = 'EM', 'Email'
+#     OTHER = 'OT', 'Other way not possible'
 
 class ProfileStatus(models.TextChoices):
     INCOMPLETE = 'IN', 'Incomplete'
@@ -36,20 +36,25 @@ class Gender(models.TextChoices):
     TRANS = 'T', 'Transgender'
     SECRET = 'S', 'Prefer not to say'
 
+#(State Management of releations b/w Users)
 class RelationshipActivityType(models.TextChoices):
-    FOLLOW = 'F', 'Follow'
-    OBSELETE = 'O', 'Obselete'
-    BLOCK = 'B', 'Block'
-    MUTE = 'M', 'Mute'
-    FOLLOW_REQUESTED = 'FR', 'Follow Requested'
+    FOLLOW = 'F', 'Follow' # start follwing 
+    OBSOLETE = 'O', 'Obsolete' # some reln existed but now obselete (not deleting for sometime for internal use)
+    BLOCK = 'B', 'Block' # Without follow Block
+    MUTE = 'M', 'Mute' # Without follow Mute
+    FOLLOW_REQUESTED = 'FR', 'Follow Requested', #for private account (not allowed if blocked)
+    FOLLOW_MUTE = 'FM', 'Follow Mute', # follows then mutes
+    FOLLOW_BLOCK = 'FB', 'Follow Block' #follows then blocks
 
 #ToDO -> change model name to UserProfileData
 class UserData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    userHandle = models.CharField(max_length=30, unique=True)
-    loginId = models.CharField(max_length=30, unique=True)
+    emailVerified = models.BooleanField(default = False)
+    mobileVerified = models.BooleanField(default = False)
+    userHandle = models.CharField(max_length=30, default='')
+    #loginId = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=500, default='')
-    mobileNumber = PhoneNumberField(blank=True)
+    mobileNumber = models.CharField(max_length=10, default='') #handle uniquess part in the code
     dateOfBirth = models.DateField(null=True)
     verificationLevel = models.CharField(choices=VerificationLevel.choices, max_length=1, default='U')
     karma = models.IntegerField(default=0)
@@ -61,13 +66,16 @@ class UserData(models.Model):
     gender = models.CharField(max_length=1, choices=Gender.choices, default='S')
     privacy = models.CharField(max_length=2, choices=AccountPrivacyType.choices, default='PB')
     registrationDate = models.DateTimeField(default=timezone.now)
-    profileUpdateDate = models.DateTimeField(auto_now=True)
+    profileUpdateDate = models.DateTimeField()
     profilePicture = models.CharField(max_length=500, default = 'https://i.pravatar.cc/150?img=6')
     backgroundPicture = models.CharField(max_length=500, default = 'https://picsum.photos/id/1006/3000/2000')
-    signedUpMethod = models.CharField(max_length=2, choices=SignedUpMethod.choices, default='EM')
-    verificationUrl = models.CharField(max_length = 500, null = True)
+    #signedUpMethod = models.CharField(max_length=2, choices=SignedUpMethod.choices, default='EM')
+    verificationOtpCode = models.CharField(max_length = 500, null = True)
+    verificationOtpCodeUpdateDate = models.DateTimeField()
     profileStatus = models.CharField(max_length=2, choices=ProfileStatus.choices, default = 'IN')
     profileType = models.CharField(max_length=2, choices=profileType.choices, default='NM')
+    primaryLocation = models.CharField(max_length=50, default='BR_Nalanda')
+    secondaryLocation = models.CharField(max_length=50, default='')
 
 class RelationshipActivity(models.Model):
     userFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')

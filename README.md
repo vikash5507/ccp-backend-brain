@@ -39,3 +39,9 @@
   docker rm -f $(docker ps -a -q) && docker rmi ccp-backend-brain_backend
   docker-compose up
   ``` 
+
+
+  ### Api Documentation: ###
+  - To See Available APIs: http://localhost:8000/openapi/
+
+  - Checkout Swagger UI for APIs: http://localhost:8000/swagger-ui/

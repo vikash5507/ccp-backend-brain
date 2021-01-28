@@ -11,59 +11,71 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.utils.datastructures import MultiValueDictKeyError
+from rest_framework.authtoken.models import Token
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
 import random
 import string
 
-@method_decorator(csrf_exempt, name='dispatch')
-class SignupView(View):
-	def post(self, request):
-		try:
-			email = request.POST['email']
-			password = request.POST['password']
-			print("checking user present or not")
-			#print(User.objects.filter(username=username).exists())
-			#print(isUserExist(username))
-			if isUserAlreadyExist(email):
-				return HttpResponseBadRequest("User Already Exist", status=409)
-			else:
-				#ToDO making username and email same (we can genrate unique values also)
-				user = User.objects.create_user(username=email, password=password)
-				user.email = email
-				fullname = request.POST['fullname']
-				first_second_name_list = fullname.split(" ")
-				user.first_name = first_second_name_list[0]
-				if len(first_second_name_list) == 1:
-					user.last_name = ''
-				else:
-					user.last_name = ' '.join(first_second_name_list[1:])
-		except MultiValueDictKeyError:
-			return HttpResponseBadRequest("Invalid request!")
-		try:
-			user.save()
-			signUpUser = User.objects.get(username=email)
-			userdata = UserData(user=signUpUser)
-			userdata.userHandle = signUpUser.first_name+generate_random_code(4)
-			userdata.loginId = signUpUser.username
-			#ToDo - Update signedMethod - mobile/email
-			userdata.save()
+
+
+# @method_decorator(csrf_exempt, name='dispatch')
+# class SignupView(View):
+# 	def post(self, request):
+# 		try:
+# 			email = request.POST['email']
+# 			password = request.POST['password']
+# 			print("checking user present or not")
+# 			#print(User.objects.filter(username=username).exists())
+# 			#print(isUserExist(username))
+# 			if isUserAlreadyExist(email):
+# 				return HttpResponseBadRequest("User Already Exist", status=409)
+# 			else:
+# 				#ToDO making username and email same (we can genrate unique values also)
+# 				user = User.objects.create_user(username=email, password=password)
+# 				user.email = email
+# 				fullname = request.POST['fullname']
+# 				first_second_name_list = fullname.split(" ")
+# 				user.first_name = first_second_name_list[0]
+# 				if len(first_second_name_list) == 1:
+# 					user.last_name = ''
+# 				else:
+# 					user.last_name = ' '.join(first_second_name_list[1:])
+# 		except MultiValueDictKeyError:
+# 			return HttpResponseBadRequest("Invalid request!")
+# 		try:
+# 			user.save()
+# 			signUpUser = User.objects.get(username=email)
+# 			userdata = UserData(user=signUpUser)
+# 			userdata.userHandle = signUpUser.first_name+generate_random_code(4)
+# 			userdata.loginId = signUpUser.username
+# 			#ToDo - Update signedMethod - mobile/email
+
+# 			#ToDO - Save primary & secondary Location asked in UI
+
+# 			#ToDo - Send Email Verification Link
+# 			userdata.save()
 			
-			context = {
-				'uid' : signUpUser.id,
-				'fullname' : ' '.join([signUpUser.first_name, signUpUser.last_name]),
-				'email' : signUpUser.email,
-				'username' : signUpUser.username
-			}
-			return JsonResponse(context, safe=False)
-		# TODO(Sachin): Better exception handling with approriate particular exceptions
-		except Exception:
-			# log exception
-			return HttpResponseServerError("User creation Failed!")
+# 			context = {
+# 				'uid' : signUpUser.id,
+# 				'fullname' : ' '.join([signUpUser.first_name, signUpUser.last_name]),
+# 				'email' : signUpUser.email,
+# 				'username' : signUpUser.username
+# 			}
+# 			return JsonResponse(context, safe=False)
+# 		# TODO(Sachin): Better exception handling with approriate particular exceptions
+# 		except Exception:
+# 			# log exception
+# 			return HttpResponseServerError("User creation Failed!")
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class UpdateUserView(LoginRequiredMixin, View):
-	def post(self, request):
-		pass
+# @method_decorator(csrf_exempt, name='dispatch')
+# class UpdateUserView(LoginRequiredMixin, View):
+# 	def post(self, request):
+# 		pass
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -77,6 +89,8 @@ class LoginView(View):
 			username = user.username
 		
 		user = authenticate(username=username, password=password)
+		token, _ = Token.objects.get_or_create(user=user)
+		print(token)
 		print(user)
 		if user is not None:
 			try:
@@ -87,7 +101,8 @@ class LoginView(View):
 						'uid' : signInUser.id,
 						'fullname' : ' '.join([signInUser.first_name, signInUser.last_name]),
 						'email' : signInUser.email,
-						'username' : signInUser.username
+						'username' : signInUser.username,
+						'token': token.key
 					}
 					return JsonResponse(context, safe=False)
 				else:

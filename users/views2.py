@@ -12,6 +12,7 @@ from datetime import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.core.serializers import serialize
+from django.contrib.auth import login, logout
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UpdateUserView(LoginRequiredMixin, View):
@@ -39,19 +40,27 @@ class UpdateUserView(LoginRequiredMixin, View):
 class GetProfileDataView(LoginRequiredMixin, View):
 	def get(self, request):
 		user = request.user
-		userdata = UserData.objects.get(user=user)
-		return JsonResponse({
-			'userHandle':userdata.userHandle,
-			'description':userdata.description,
-			'mobileNumber':str(userdata.mobileNumber),
-			'dateOfBirth':userdata.dateOfBirth,
-			'verificationLevel':userdata.verificationLevel,
-			'karma':userdata.karma,
-			'followers_count':userdata.followers_count,
-			'following_count':userdata.following_count,
-			'post_count':userdata.post_count,
-			'gender':userdata.gender
-		})
+		print(user)
+		if(user.id == None):
+			return HttpResponseBadRequest("If not logged in request should not have come!!")
+		else:
+			userdata = UserData.objects.get(user=user)
+			return JsonResponse({
+				'userHandle':userdata.userHandle,
+				'description':userdata.description,
+				'mobileNumber':str(userdata.mobileNumber),
+				'dateOfBirth':userdata.dateOfBirth,
+				'verificationLevel':userdata.verificationLevel,
+				'karma':userdata.karma,
+				'followers_count':userdata.followersCount,
+				'following_count':userdata.followingCount,
+				'post_count':userdata.postCount,
+				'gender':userdata.gender,
+				'uid': userdata.user.id,
+				'fullname' : ' '.join([userdata.user.first_name, userdata.user.last_name]),
+				'email' : userdata.user.email,
+				'username' : userdata.user.username
+			})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -77,9 +86,9 @@ class GetUserDataView(View):
 				'dateOfBirth':userdata.dateOfBirth,
 				'verificationLevel':userdata.verificationLevel,
 				'karma':userdata.karma,
-				'followers_count':userdata.followers_count,
-				'following_count':userdata.following_count,
-				'post_count':userdata.post_count,
+				'followers_count':userdata.followersCount,
+				'following_count':userdata.followingCount,
+				'post_count':userdata.postCount,
 				'gender':userdata.gender
 			})
 		else:
