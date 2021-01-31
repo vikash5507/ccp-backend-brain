@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.models import UserData, RelationshipActivity
+from users.models import UserProfile, RelationshipActivity
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
@@ -18,19 +18,19 @@ from django.contrib.auth import login, logout
 class UpdateUserView(LoginRequiredMixin, View):
 	def post(self, request):
 		user = request.user
-		userdata = UserData.objects.get(user=user)
+		userprofile = UserProfile.objects.get(user=user)
 		try:
 			try:
-				userdata.userHandle = request.GET.get('user_handle', userdata.userHandle)
+				userprofile.userHandle = request.GET.get('user_handle', userprofile.userHandle)
 			except IntegrityError as e:
 				return HttpResponseBadRequest(e)
 
-			userdata.description = request.GET.get('description', userdata.description)
-			userdata.mobileNumber = request.GET.get('mobileNumber', userdata.mobileNumber)
+			userprofile.description = request.GET.get('description', userprofile.description)
+			userprofile.mobileNumber = request.GET.get('mobileNumber', userprofile.mobileNumber)
 			if 'dateOfBirth' in request.GET:
-				userdata.dateOfBirth = datetime.strptime(request.GET.get('dateOfBirth'), '%Y-%m-%d').date()
-			userdata.gender = request.GET.get('gender', userdata.gender)
-			userdata.save()
+				userprofile.dateOfBirth = datetime.strptime(request.GET.get('dateOfBirth'), '%Y-%m-%d').date()
+			userprofile.gender = request.GET.get('gender', userprofile.gender)
+			userprofile.save()
 			return HttpResponse("success")
 		except MultiValueDictKeyError as e:
 			return HttpResponseBadRequest(e)
@@ -44,27 +44,27 @@ class GetProfileDataView(LoginRequiredMixin, View):
 		if(user.id == None):
 			return HttpResponseBadRequest("If not logged in request should not have come!!")
 		else:
-			userdata = UserData.objects.get(user=user)
+			userprofile = UserProfile.objects.get(user=user)
 			return JsonResponse({
-				'userHandle':userdata.userHandle,
-				'description':userdata.description,
-				'mobileNumber':str(userdata.mobileNumber),
-				'dateOfBirth':userdata.dateOfBirth,
-				'verificationLevel':userdata.verificationLevel,
-				'karma':userdata.karma,
-				'followers_count':userdata.followersCount,
-				'following_count':userdata.followingCount,
-				'post_count':userdata.postCount,
-				'gender':userdata.gender,
-				'uid': userdata.user.id,
-				'fullname' : ' '.join([userdata.user.first_name, userdata.user.last_name]),
-				'email' : userdata.user.email,
-				'username' : userdata.user.username
+				'userHandle':userprofile.userHandle,
+				'description':userprofile.description,
+				'mobileNumber':str(userprofile.mobileNumber),
+				'dateOfBirth':userprofile.dateOfBirth,
+				'verificationLevel':userprofile.verificationLevel,
+				'karma':userprofile.karma,
+				'followers_count':userprofile.followersCount,
+				'following_count':userprofile.followingCount,
+				'post_count':userprofile.postCount,
+				'gender':userprofile.gender,
+				'uid': userprofile.user.id,
+				'fullname' : ' '.join([userprofile.user.first_name, userprofile.user.last_name]),
+				'email' : userprofile.user.email,
+				'username' : userprofile.user.username
 			})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class GetUserDataView(View):
+class GetUserProfileView(View):
 	def get(self, request):
 		try:
 			username = request.GET['username']
@@ -72,24 +72,24 @@ class GetUserDataView(View):
 			return HttpResponseBadRequest("Send username!")
 		user = User.objects.get(username=username)
 		if user is not None:
-			userdata = UserData.objects.get(user=user)
+			userprofile = UserProfile.objects.get(user=user)
 
-			if userdata.accountDeleted:
+			if userprofile.accountDeleted:
 				return HttpResponseNotFound("User does not exist!")
-			if userdata.accountDisabled:
+			if userprofile.accountDisabled:
 				return HttpResponseNotFound("User account disabled!")
 
 			return JsonResponse({
-				'userHandle':userdata.userHandle,
-				'description':userdata.description,
-				'mobileNumber':str(userdata.mobileNumber),
-				'dateOfBirth':userdata.dateOfBirth,
-				'verificationLevel':userdata.verificationLevel,
-				'karma':userdata.karma,
-				'followers_count':userdata.followersCount,
-				'following_count':userdata.followingCount,
-				'post_count':userdata.postCount,
-				'gender':userdata.gender
+				'userHandle':userprofile.userHandle,
+				'description':userprofile.description,
+				'mobileNumber':str(userprofile.mobileNumber),
+				'dateOfBirth':userprofile.dateOfBirth,
+				'verificationLevel':userprofile.verificationLevel,
+				'karma':userprofile.karma,
+				'followers_count':userprofile.followersCount,
+				'following_count':userprofile.followingCount,
+				'post_count':userprofile.postCount,
+				'gender':userprofile.gender
 			})
 		else:
 			return HttpResponseNotFound("User does not exist!")

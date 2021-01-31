@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from users.models import UserData
+from userprofile.models import UserProfile
 from auth_api.utils import isUserAlreadyExistandVerified, isUserInstanceForUpdate, isUserAlreadyExist, validateEmailPhone, generate_random_code, sendVerificationOtp
 from django.utils import timezone
 
@@ -24,10 +24,10 @@ class LoginView(APIView):
         if not validateEmailPhone(email_phone):
             return Response({'error': 'Please provide both proper email address or mobile number!'}, 
                         status=status.HTTP_400_BAD_REQUEST)
-        userProfile = UserData()
+        userProfile = UserProfile()
         if isUserAlreadyExistandVerified(email_phone):
             user = isUserInstanceForUpdate(email_phone)
-            userProfile = UserData.objects.filter(user=user).first()
+            userProfile = UserProfile.objects.filter(user=user).first()
             userProfile.verificationOtpCode = generate_random_code(6)
             userProfile.verificationOtpCodeUpdateDate = timezone.now()
             userProfile.save()

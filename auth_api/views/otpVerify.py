@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from users.models import UserData
+from userprofile.models import UserProfile
 from auth_api.utils import isUserAlreadyExist, validateEmailPhone, generate_random_code, isEmail, isPhoneNumber
 from django.utils import timezone
 
@@ -25,14 +25,14 @@ class OtpVerifyView(APIView):
         if not validateEmailPhone(email_phone):
             return Response({'error': 'Please provide both proper email address or mobile number!'}, 
                         status=status.HTTP_400_BAD_REQUEST)
-        userProfile = UserData()
+        userProfile = UserProfile()
         if isUserAlreadyExist(email_phone):
             if isEmail(email_phone):
                 user = User.objects.filter(email = email_phone).first()
                 if user is not None:
-                    userProfile = UserData.objects.filter(user=user).first()
+                    userProfile = UserProfile.objects.filter(user=user).first()
             else:
-                userProfile = UserData.objects.filter(mobileNumber = email_phone).first()
+                userProfile = UserProfile.objects.filter(mobileNumber = email_phone).first()
         else:
             return Response({'error': 'User does not exist! Please signUp first!!'}, 
                         status=status.HTTP_400_BAD_REQUEST)

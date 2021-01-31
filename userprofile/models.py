@@ -47,7 +47,7 @@ class RelationshipActivityType(models.TextChoices):
     FOLLOW_BLOCK = 'FB', 'Follow Block' #follows then blocks
 
 #ToDO -> change model name to UserProfileData
-class UserData(models.Model):
+class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     emailVerified = models.BooleanField(default = False)
     mobileVerified = models.BooleanField(default = False)
@@ -77,6 +77,9 @@ class UserData(models.Model):
     primaryLocation = models.CharField(max_length=50, default='BR_Nalanda')
     secondaryLocation = models.CharField(max_length=50, default='')
 
+    def __str__(self):
+        return self.user.username
+    
 class RelationshipActivity(models.Model):
     userFrom = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'outgoing_relationships')
     userTo = models.ForeignKey(User, on_delete=models.CASCADE, related_name= 'incoming_relationships')

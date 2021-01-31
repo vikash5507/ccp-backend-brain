@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
-from users.models import UserData
+from users.models import UserProfile
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
@@ -49,15 +49,15 @@ import string
 # 		try:
 # 			user.save()
 # 			signUpUser = User.objects.get(username=email)
-# 			userdata = UserData(user=signUpUser)
-# 			userdata.userHandle = signUpUser.first_name+generate_random_code(4)
-# 			userdata.loginId = signUpUser.username
+# 			userprofile = UserProfile(user=signUpUser)
+# 			userprofile.userHandle = signUpUser.first_name+generate_random_code(4)
+# 			userprofile.loginId = signUpUser.username
 # 			#ToDo - Update signedMethod - mobile/email
 
 # 			#ToDO - Save primary & secondary Location asked in UI
 
 # 			#ToDo - Send Email Verification Link
-# 			userdata.save()
+# 			userprofile.save()
 			
 # 			context = {
 # 				'uid' : signUpUser.id,

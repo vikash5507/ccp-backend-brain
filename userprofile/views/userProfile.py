@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from users.models import UserData, RelationshipActivity
+from userprofile.models import UserProfile, RelationshipActivity
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -12,6 +12,9 @@ class GetProfileDataView(APIView):
 
     @staticmethod
     def get(request, username):
+        """
+        Fetch profile data of given username, No Auth Required
+        """
         print("object passed"+ username)
         
         user = User.objects.filter(username = username).first()
@@ -26,7 +29,7 @@ class GetProfileDataView(APIView):
             context['is_me'] = False
         
         ### UserProfile 
-        userprofile = UserData.objects.filter(user = user).first()
+        userprofile = UserProfile.objects.filter(user = user).first()
         context['profile_data'] = {
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -59,6 +62,18 @@ class GetProfileDataView(APIView):
             return Response(context, status=status.HTTP_200_OK)
         else:
             return Response(context, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    
+    @staticmethod
+    def patch(request, username):
+        """
+        Update profile of authenticated user
+        """
+        user = get_object_or_404(User, username=username)
+        if request.user != user:
+            return Response(context,status=status.HTTP_401_UNAUTHORIZED)
+        
+        userProfile = get_object_or_404(UserProfile, user=user)
+
 
 '''
 Profile Relation Activity
@@ -99,7 +114,7 @@ class ProfileActionView(APIView):
 '''
 Still Not Sure if this method is needed
 '''
-class GetUserDataView(APIView):
+class GetUserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     @staticmethod

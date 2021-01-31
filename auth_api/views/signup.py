@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from users.models import UserData
+from userprofile.models import UserProfile
 from auth_api.utils import isUserAlreadyExistandVerified, generate_random_code, isEmail, isPhoneNumber, sendVerificationOtp, isUserInstanceForUpdate, validateEmailPhone
 from django.utils import timezone
 #from auth_api.serializers import UserSerializer
@@ -57,9 +57,9 @@ class SignupView(APIView):
         user.save()
 
         ### UserProfile Update
-        userprofile = UserData.objects.filter(user = user).first()
+        userprofile = UserProfile.objects.filter(user = user).first()
         if not userprofile:
-            userprofile = UserData()
+            userprofile = UserProfile()
 	
         userprofile.user = user
         userprofile.userHandle = user.username

@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('auth_api.urls')),
-    path('user/', include('users.urls')),
+    path('user/', include('userprofile.urls')),
 
 
     path('openapi/', get_schema_view(

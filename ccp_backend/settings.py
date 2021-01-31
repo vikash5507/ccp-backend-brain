@@ -48,8 +48,8 @@ INSTALLED_APPS = [
 
     #Internal Apps
     'auth_api',
-    'posts',
-    'users',
+    #'posts',
+    'userprofile',
 ]
 
 MIDDLEWARE = [

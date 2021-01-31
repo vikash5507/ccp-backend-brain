@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from users.models import UserData
+from userprofile.models import UserProfile
 import re
 import string
 import random
@@ -21,9 +21,9 @@ def isUserAlreadyExistandVerified(email_phone):
         if(isEmail(email_phone)):
             user = User.objects.filter(email = email_phone).first()
             if user is not None:
-                exist_status = UserData.objects.filter(user = user).first().emailVerified
+                exist_status = UserProfile.objects.filter(user = user).first().emailVerified
         else:
-            userProfile = UserData.objects.filter(mobileNumber = email_phone).first()
+            userProfile = UserProfile.objects.filter(mobileNumber = email_phone).first()
             if userProfile is not None:
                 exist_status = userProfile.mobileVerified
 
@@ -36,7 +36,7 @@ def isUserAlreadyExist(email_phone):
         if user is not None:
             exist_status = True
     else:
-        userProfile = UserData.objects.filter(mobileNumber = email_phone).first()
+        userProfile = UserProfile.objects.filter(mobileNumber = email_phone).first()
         if userProfile is not None:
             exist_status = True
     
@@ -49,7 +49,7 @@ def isUserInstanceForUpdate(email_phone):
         if user is not None:
             user = user_temp
     else:
-        userProfile = UserData.objects.filter(mobileNumber = email_phone).first()
+        userProfile = UserProfile.objects.filter(mobileNumber = email_phone).first()
         if userProfile is not None:
             user = userProfile.user
     
